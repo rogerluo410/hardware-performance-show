@@ -1,0 +1,6 @@
+F:\Work_for\SNMP代理\DPV1\GetCPUTemperature\GetCPUTemperature\bin\Release\GetCPUTemperature.dll
+F:\Work_for\SNMP代理\DPV1\GetCPUTemperature\GetCPUTemperature\bin\Release\GetCPUTemperature.pdb
+F:\Work_for\SNMP代理\DPV1\GetCPUTemperature\GetCPUTemperature\bin\Release\OpenHardwareMonitorLib.dll
+F:\Work_for\SNMP代理\DPV1\GetCPUTemperature\GetCPUTemperature\obj\Release\ResolveAssemblyReference.cache
+F:\Work_for\SNMP代理\DPV1\GetCPUTemperature\GetCPUTemperature\obj\Release\GetCPUTemperature.dll
+F:\Work_for\SNMP代理\DPV1\GetCPUTemperature\GetCPUTemperature\obj\Release\GetCPUTemperature.pdb

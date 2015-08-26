@@ -1,0 +1,6 @@
+F:\Work_for\SNMP代理\DPV1\TemperatureAlertSystem\TemperatureAlertSystem\bin\Debug\TemperatureAlertSystem.pdb
+F:\Work_for\SNMP代理\DPV1\TemperatureAlertSystem\TemperatureAlertSystem\obj\Debug\ResolveAssemblyReference.cache
+F:\Work_for\SNMP代理\DPV1\TemperatureAlertSystem\TemperatureAlertSystem\obj\Debug\TemperatureAlertSystem.pdb
+F:\Work_for\SNMP代理\DPV1\TemperatureAlertSystem\TemperatureAlertSystem\bin\Debug\TemperatureAlertSystem.dll
+F:\Work_for\SNMP代理\DPV1\TemperatureAlertSystem\TemperatureAlertSystem\obj\Debug\TemperatureAlertSystem.dll
+F:\Work_for\SNMP代理\DPV1\TemperatureAlertSystem\TemperatureAlertSystem\bin\Debug\OpenHardwareMonitorLib.dll

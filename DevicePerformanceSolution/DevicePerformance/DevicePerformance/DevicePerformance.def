@@ -1,0 +1,10 @@
+LIBRARY	"DevicePerformance"
+EXPORTS
+?get_cpu_usage@@YAHAAHAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+?get_device_bandwidth@@YAHAAKV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AAV12@@Z
+?get_device_recv_bytes@@YAHAAKV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AAV12@@Z
+?get_device_send_bytes@@YAHAAKV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AAV12@@Z
+?get_device_temperature@@YAHAAHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AAV12@@Z
+?get_disk_usage@@YAHAAHAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+?get_memory_usage@@YAHAAHAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+?get_system_id@@YAHAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0@Z
