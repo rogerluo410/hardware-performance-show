@@ -4,3 +4,5 @@ Get system performance data under Windows and Linux systems, such as CPU usage, 
 
 ###pending
 GDB document : http://www.sourceware.org/gdb/current/onlinedocs/gdb.html
+autoconf & automake : http://www.cnblogs.com/itech/archive/2010/11/28/1890220.html
+                      http://www.laruence.com/2009/11/18/1154.html               --for GNU
