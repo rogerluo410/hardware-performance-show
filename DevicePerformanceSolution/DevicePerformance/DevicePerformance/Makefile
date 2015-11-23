@@ -17,6 +17,9 @@ $(SHARE_LIB):$(OBJ)
 .cpp.o:
 	$(CC) $(CC_FLAG) $(INC) -c $*.cpp -o $(DIR_OBJ)/$*.o
 
+install:
+	cp -r ./DevicePerformance.h ./lib_linux/libDevicePerformance.so ../Linux
+
 clean:
 	rm -rf $(DIR_OBJ)/*.o $(DIR_LIB)/*.so
 

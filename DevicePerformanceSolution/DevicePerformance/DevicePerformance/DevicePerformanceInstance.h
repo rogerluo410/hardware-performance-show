@@ -48,7 +48,11 @@ public:
 	int get_device_send_bytes(unsigned long &SendBytes, string strGUID, string &strErrMsg);
 	int get_device_recv_bytes(unsigned long &RecvBytes, string strGUID, string &strErrMsg);
 	int get_device_bandwidth(unsigned long &Bandwidth, string strGUID, string &strErrMsg);
-    int get_network_interface_relevant(unsigned long &ulValue, string strGUID, int iSwitch, string &strErrMsg);
+	int get_device_send_bytes_by_ip(unsigned long &SendBytes, string strIP, string &strErrMsg);
+	int get_device_recv_bytes_by_ip(unsigned long &RecvBytes, string strIP, string &strErrMsg);
+	int get_device_bandwidth_by_ip(unsigned long &Bandwidth, string strIP, string &strErrMsg);
+    int get_network_interface_relevant(unsigned long &ulValue, string strCondition, int iSwitch, int iSwitch1, string &strErrMsg);
+	string get_mac_by_ip(const string strIP);
  
 private:
 	CDevicePerformanceInstance(void);

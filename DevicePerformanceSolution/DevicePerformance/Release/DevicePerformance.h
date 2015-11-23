@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 
@@ -131,3 +133,54 @@ int get_device_recv_bytes(unsigned long &RecvBytes, string strGUID, string &strE
 int get_device_bandwidth(unsigned long &Bandwidth, string strGUID, string &strErrMsg);
 
 
+/*
+  扩展接口： 
+     通过IP地址查询网卡参数
+*/
+string get_mac_by_ip(const string strIP);
+
+int get_device_send_bytes_by_ip(unsigned long &SendBytes, string strIP, string &strErrMsg);
+
+int get_device_recv_bytes_by_ip(unsigned long &RecvBytes, string strIP, string &strErrMsg);
+
+int get_device_bandwidth_by_ip(unsigned long &Bandwidth, string strIP, string &strErrMsg);
+
+
+
+/*
+  标准C扩展函数调用例子:
+  int diskUsage1         = 0;
+  char szErrMsg[48]      = "";
+  memset(szErrMsg, 0 , sizeof(szErrMsg));
+  int diskVal1 = get_disk_usage_ex(&diskUsage1, szErrMsg);
+  std::cout << " get_disk_usage_ex :  "<< diskUsage1  << ",Return Value: "<<diskVal1 <<std::endl;
+*/
+
+extern "C"{
+   int get_system_id_ex(char *szSystemId, char *szErrMsg);
+   int get_cpu_usage_ex(int *iCpuUsage, char *szErrMsg);
+   int get_memory_usage_ex(int *iMemUsage, char *szErrMsg);
+   int get_disk_usage_ex(int *iDiskUsage, char *szErrMsg);
+   int get_device_temperature_ex(int *iTemperature,const char *szTempFile/*Used for Linux*/, char *szErrMsg);
+   /*
+   新增接口 get_device_temperature_ex_1 ：直接返回温度
+     失败返回 -1
+	 成功返回 CPU温度
+   */
+   int get_device_temperature_ex_1(const char *szTempFile/*Used for Linux*/, char *szErrMsg);
+
+   int get_device_send_bytes_ex(unsigned long *SendBytes, const char *szGUID, char *szErrMsg);
+   int get_device_recv_bytes_ex(unsigned long *RecvBytes, const char *szGUID, char *szErrMsg);
+   int get_device_bandwidth_ex(unsigned long *Bandwidth, const char *szGUID, char *szErrMsg);
+
+   /*
+     扩展接口： 
+         通过IP地址查询网卡参数
+   */
+
+   int get_device_send_bytes_by_ip_ex(unsigned long *SendBytes, const char *szIP, char *szErrMsg);
+
+   int get_device_recv_bytes_by_ip_ex(unsigned long *RecvBytes, const char *szIP, char *szErrMsg);
+
+   int get_device_bandwidth_by_ip_ex(unsigned long  *Bandwidth, const char *szIP, char *szErrMsg);
+}

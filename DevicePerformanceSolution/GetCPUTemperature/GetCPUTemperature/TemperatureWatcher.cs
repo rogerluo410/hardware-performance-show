@@ -24,22 +24,28 @@ namespace GetCPUTemperature
 
         private void watch()
         {
-            var sensors           = CpuSensorsFilter.Instance.filter(SensorType.Temperature);
-            float avgTemperature  = 0;
-            var validSensorsCount = 0;
-            foreach (var sensor in sensors)
+            try
             {
-                if (sensor.Value != null)
+                var sensors = CpuSensorsFilter.Instance.filter(SensorType.Temperature);
+                float avgTemperature = 0;
+                var validSensorsCount = 0;
+                foreach (var sensor in sensors)
                 {
-                    avgTemperature += sensor.Value.GetValueOrDefault();
-                    validSensorsCount++;
+                    if (sensor.Value != null)
+                    {
+                        avgTemperature += sensor.Value.GetValueOrDefault();
+                        validSensorsCount++;
+                    }
                 }
+
+                avgTemperature /= validSensorsCount;
+
+                LastMeasuredTemperature = avgTemperature;
             }
-
-            avgTemperature /= validSensorsCount;
-
-            LastMeasuredTemperature = avgTemperature;
-
+            catch (Exception)
+            {
+                //do nothing
+            }
         }
 
     }

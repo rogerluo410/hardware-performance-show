@@ -443,7 +443,8 @@ int CDevicePerformanceInstance::get_device_temperature(int &iTemperature,const s
   return 0;
 }
 
-int CDevicePerformanceInstance::get_network_interface_relevant(unsigned long &ulValue, string strGUID, int iSwitch, string &strErrMsg)
+
+int CDevicePerformanceInstance::get_network_interface_relevant(unsigned long &ulValue, string strCondition, int iSwitch,int iSwitch1, string &strErrMsg)
 {
 #ifdef _WINDOWS_	
 	// Declare and initialize variables.
@@ -481,15 +482,35 @@ int CDevicePerformanceInstance::get_network_interface_relevant(unsigned long &ul
 	if ((dwRetVal = GetIfTable(pIfTable, &dwSize, FALSE)) == NO_ERROR)
 	{
 #ifdef _DEBUG
-		printf("Num Entries: %ld\n", pIfTable->dwNumEntries);
+		//printf("Num Entries: %ld\n", pIfTable->dwNumEntries);
 #endif
 		for (i = 0; i < (int) pIfTable->dwNumEntries; i++)
 		{
 			pIfRow         = (MIB_IFROW *) & pIfTable->table[i];
-			char *lpszText = _com_util::ConvertBSTRToString(pIfRow->wszName);
-			string strName = string(lpszText);
-			delete[] lpszText;
-			if (pIfRow->dwType == MIB_IF_TYPE_ETHERNET && strName == "\\DEVICE\\TCPIP_{"+ strGUID + "}" )
+		
+            //via network interface GUID or  IP address
+			string strCompared = "";
+			string strName     = "";
+			if(1 == iSwitch1)
+			{
+               //get mac
+               strCompared = get_mac_by_ip(strCondition);
+
+			   char szMacAddr[15]="";
+			   memset(szMacAddr,0,sizeof(szMacAddr));
+			   sprintf(szMacAddr,"%02x%02x%02x%02x%02x%02x",(int)pIfRow->bPhysAddr[0],(int)pIfRow->bPhysAddr[1],
+						(int)pIfRow->bPhysAddr[2],(int)pIfRow->bPhysAddr[3],(int)pIfRow->bPhysAddr[4],(int)pIfRow->bPhysAddr[5]);
+			   strName = string(szMacAddr); 
+
+			}
+			else if (0 == iSwitch1 )
+			{
+				char *lpszText = _com_util::ConvertBSTRToString(pIfRow->wszName);
+			    strName        = string(lpszText);
+				strCompared    = "\\DEVICE\\TCPIP_{"+ strCondition + "}";
+				delete[] lpszText;
+			}
+			if (pIfRow->dwType == MIB_IF_TYPE_ETHERNET && strName == strCompared  )
 			{
                         switch(iSwitch)
                         {
@@ -513,17 +534,22 @@ int CDevicePerformanceInstance::get_network_interface_relevant(unsigned long &ul
 #else
 	//Linux version
 	unsigned long tempValue = 0;
-	string netInterfaceFile;
+	string netInterfaceFile = "";
+	string strFinalCondition = strCondition;
+	if( 1 == iSwitch1)
+	{
+       strFinalCondition = "eth0";   //将来打算做成 通过IP查找到网络接口名
+	}
     switch(iSwitch)
     {
         case 0:
-             netInterfaceFile = "/sys/class/net/"+ strGUID +"/statistics/tx_bytes";
+             netInterfaceFile = "/sys/class/net/"+ strFinalCondition +"/statistics/tx_bytes";
              break;
         case 1:
-             netInterfaceFile = "/sys/class/net/"+ strGUID + "/statistics/rx_bytes" ;
+             netInterfaceFile = "/sys/class/net/"+ strFinalCondition + "/statistics/rx_bytes" ;
 	       break;
         case 2:
-             netInterfaceFile = "/sys/class/net/"+ strGUID + "/speed";
+             netInterfaceFile = "/sys/class/net/"+ strFinalCondition + "/speed";
              break;
         default:
              break;
@@ -544,16 +570,101 @@ int CDevicePerformanceInstance::get_network_interface_relevant(unsigned long &ul
 	return 0;
 }
 
+/*
+  iSwitch :
+     value 0 : 发送字节数
+	 value 1 : 接收字节数
+	 value 2 : 网络带宽
+
+  iSwitch1:
+     value 0 : 基于 “网卡GUID/网络接口名” 查询
+	 value 1 : 基于 “网络IP/网络接口名”查询
+*/
 int CDevicePerformanceInstance::get_device_send_bytes(unsigned long &SendBytes, string strGUID, string &strErrMsg)
 {
-     return get_network_interface_relevant(SendBytes, strGUID, 0, strErrMsg);
+     return get_network_interface_relevant(SendBytes, strGUID, 0/*iSwitch*/, 0/*iSwitch1*/, strErrMsg);
 }
 int CDevicePerformanceInstance::get_device_recv_bytes(unsigned long &RecvBytes, string strGUID, string &strErrMsg)
 {
-     return get_network_interface_relevant(RecvBytes, strGUID, 1, strErrMsg);
+     return get_network_interface_relevant(RecvBytes, strGUID, 1/*iSwitch*/, 0/*iSwitch1*/, strErrMsg);
 }
 
 int CDevicePerformanceInstance::get_device_bandwidth(unsigned long &Bandwidth, string strGUID, string &strErrMsg)
 {
-     return get_network_interface_relevant(Bandwidth, strGUID, 2, strErrMsg);
+     return get_network_interface_relevant(Bandwidth, strGUID, 2/*iSwitch*/, 0/*iSwitch1*/, strErrMsg);
+}
+
+int CDevicePerformanceInstance::get_device_send_bytes_by_ip(unsigned long &SendBytes, string strIP, string &strErrMsg)
+{
+	return get_network_interface_relevant(SendBytes, strIP, 0/*iSwitch*/, 1/*iSwitch1*/, strErrMsg);
+}
+
+int CDevicePerformanceInstance::get_device_recv_bytes_by_ip(unsigned long &RecvBytes, string strIP, string &strErrMsg)
+{
+	return get_network_interface_relevant(RecvBytes, strIP, 1/*iSwitch*/, 1/*iSwitch1*/, strErrMsg);
+}
+
+int CDevicePerformanceInstance::get_device_bandwidth_by_ip(unsigned long &Bandwidth, string strIP, string &strErrMsg)
+{
+	return get_network_interface_relevant(Bandwidth, strIP, 2/*iSwitch*/, 1/*iSwitch1*/, strErrMsg);
+}
+
+string CDevicePerformanceInstance::get_mac_by_ip(const string strIP)
+{
+#ifdef _WINDOWS_
+    char szMacAddr[15]="";
+	memset(szMacAddr,0,sizeof(szMacAddr));
+
+	PIP_ADAPTER_INFO pAdapterInfo;
+
+	PIP_ADAPTER_INFO pAdapter = NULL;
+
+	ULONG ulOutBufLen = sizeof(IP_ADAPTER_INFO);
+
+	pAdapterInfo = (PIP_ADAPTER_INFO)malloc(ulOutBufLen);
+
+	DWORD dwRetVal = GetAdaptersInfo(pAdapterInfo,&ulOutBufLen);
+
+	if(dwRetVal == ERROR_BUFFER_OVERFLOW)
+	{
+		free(pAdapterInfo);
+
+		pAdapterInfo = (PIP_ADAPTER_INFO)malloc(ulOutBufLen);
+
+		dwRetVal = GetAdaptersInfo(pAdapterInfo,&ulOutBufLen);
+	}
+
+	if(dwRetVal == NO_ERROR)
+	{
+		pAdapter = pAdapterInfo;
+
+		while (pAdapter)
+		{
+			if( pAdapter ->IpAddressList.IpAddress.String == strIP )
+			{
+               sprintf(szMacAddr,"%02x%02x%02x%02x%02x%02x",pAdapter->Address[0],pAdapter->Address[1],pAdapter->Address[2],pAdapter->Address[3],pAdapter->Address[4],pAdapter->Address[5]);
+			   break;
+			}
+			pAdapter = pAdapter->Next;
+
+		}
+	}
+
+	return string(szMacAddr);
+#else
+	string strMacOut ="";
+    string netArpFile = "/sys/class/net/eth0/address";
+	ifstream netfile(netArpFile.c_str());
+	if(!netfile.is_open())
+	{
+		return "";
+	}
+	while(netfile)
+	{
+      netfile >> strMacOut;
+      break;
+	}
+	netfile.close();
+    return strMacOut;
+#endif
 }
